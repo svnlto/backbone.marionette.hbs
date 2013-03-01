@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "backbone.marionette.hbs.js",
   "dependencies": {
-    "handlebars": "~1.0.6",
+    "handlebars": "~1.0.0-rc.3",
     "backbone": "~0.9.10",
     "backbone.marionette": "~0.9.0"
   }
