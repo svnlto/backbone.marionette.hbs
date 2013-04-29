@@ -1,10 +1,10 @@
 {
   "name": "Backbone.Marionette.Hbs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "backbone.marionette.hbs.js",
   "dependencies": {
     "handlebars": "~1.0.0-rc.3",
-    "backbone": "~0.9.10",
-    "backbone.marionette": "~1.0.0-rc6"
+    "backbone": "1.0.0.",
+    "backbone.marionette": "1.0.2"
   }
 }
