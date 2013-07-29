@@ -1,5 +1,5 @@
 {
-  "name": "Backbone.Marionette.Hbs",
+  "name": "Backbone.Marionette.hbs",
   "version": "0.0.4",
   "main": "backbone.marionette.hbs.js",
   "dependencies": {
