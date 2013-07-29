@@ -1,1 +1,1 @@
-# Backbone Marionette Hbs
+# Backbone Marionette hbs
