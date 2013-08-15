@@ -10,9 +10,12 @@ function (text, Handlebars) {
 
   'use strict';
 
-  var buildCache = {},
-      buildCompileTemplate = 'define("{{pluginName}}!{{moduleName}}", ["handlebars"], function(handlebars) {return handlebars.template({{{fn}}})});',
-      buildTemplate;
+  var buildCache = {};
+  var buildTemplate;
+
+  var buildCompileTemplate =  'define("{{pluginName}}!{{moduleName}}", ["handlebars"],';
+      buildCompileTemplate += ' function(handlebars) {';
+      buildCompileTemplate += 'return handlebars.template({{{fn}}})});';
 
   var load = function (moduleName, parentRequire, load, config) {
 
@@ -34,7 +37,7 @@ function (text, Handlebars) {
     if (moduleName in buildCache) {
 
       if (!buildTemplate) {
-          buildTemplate = Handlebars.compile(buildCompileTemplate);
+        buildTemplate = Handlebars.compile(buildCompileTemplate);
       }
 
       write(buildTemplate({
