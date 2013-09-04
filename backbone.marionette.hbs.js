@@ -1,57 +1,55 @@
 // hbs template plugin for requirejs / text.js
 // it loads and compiles Handlebars templates
 
+/*global nodeRequire:false */
+
 define([
-  'text',
   'handlebars'
 ],
 
-function (text, Handlebars) {
+function (Handlebars) {
 
   'use strict';
 
-  var buildCache = {};
-  var buildTemplate;
+  var buildMap = {};
+  var templateExtension = '.html';
 
-  var buildCompileTemplate =  'define("{{pluginName}}!{{moduleName}}", ["handlebars"],';
-      buildCompileTemplate += ' function(handlebars) {';
-      buildCompileTemplate += 'return handlebars.template({{{fn}}})});';
+  return {
 
-  var load = function (moduleName, parentRequire, load, config) {
+    // http://requirejs.org/docs/plugins.html#apiload
+    load: function (name, parentRequire, onload, config) {
 
-    text.get(parentRequire.toUrl(moduleName + '.html'), function(data) {
+      // Get the template extension.
+      var ext = (config.hbs && config.hbs.templateExtension ? config.hbs.templateExtension : templateExtension);
 
       if (config.isBuild) {
-        buildCache[moduleName] = data;
-        load();
+        // Use node.js file system module to load the template.
+        // Sorry, no Rhino support.
+        var fs = nodeRequire('fs');
+        var fsPath = config.dirBaseUrl + '/' + name + ext;
+        buildMap[name] = fs.readFileSync(fsPath).toString();
+        onload();
       } else {
-        load(Handlebars.compile(data));
+        // In browsers use the text-plugin to the load template. This way we
+        // don't have to deal with ajax stuff
+        parentRequire(['text!' + name + ext], function (raw) {
+          // Just return the compiled template
+          onload(Handlebars.compile(raw));
+        });
       }
 
-    });
+    },
 
-  };
-
-  var write = function (pluginName, moduleName, write) {
-
-    if (moduleName in buildCache) {
-
-      if (!buildTemplate) {
-        buildTemplate = Handlebars.compile(buildCompileTemplate);
-      }
-
-      write(buildTemplate({
-        pluginName: pluginName,
-        moduleName: moduleName,
-        fn: Handlebars.precompile(buildCache[moduleName])
-      }));
+    // http://requirejs.org/docs/plugins.html#apiwrite
+    write: function (pluginName, name, write) {
+      var compiled = Handlebars.precompile(buildMap[name]);
+      // Write out precompiled version of the template function as AMD
+      // definition.
+    /*jshint quotmark:double*/
+      write("define('hbs!" + name + "', ['handlebars'], function(Handlebars){ \n" + "return Handlebars.template(" + compiled.toString() + ");\n" + "});\n");
+    /*jshint quotmark:double*/
     }
 
   };
-
-  return {
-    load: load,
-    write: write
-  };
-
 });
+
